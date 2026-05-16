@@ -1,0 +1,2 @@
+# This folder holds static assets like the Gemma 4 .task or .bin model files.
+# Do not commit the actual large model files to git!

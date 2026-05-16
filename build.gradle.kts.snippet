@@ -1,0 +1,46 @@
+// This is a snippet for your app/build.gradle.kts
+
+plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    // ObjectBox plugin
+    id("io.objectbox") // Apply after kotlin plugin
+}
+
+android {
+    namespace = "com.vidya"
+    compileSdk = 34
+
+    defaultConfig {
+        applicationId = "com.vidya"
+        minSdk = 26
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
+    }
+}
+
+dependencies {
+    // MediaPipe GenAI for running Gemma on-device
+    implementation("com.google.mediapipe:tasks-genai:0.10.14")
+    
+    // ObjectBox dependencies for local Vector Search DB
+    implementation("io.objectbox:objectbox-android:3.8.0")
+    implementation("io.objectbox:objectbox-kotlin:3.8.0")
+    
+    // Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+    // Jetpack Security Crypto for Hardware-Locked Authentication Storage
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
+}
+
+// In your top-level build.gradle.kts, ensure you have:
+/*
+buildscript {
+    ext.objectboxVersion = "3.8.0"
+    dependencies {
+        classpath("io.objectbox:objectbox-gradle-plugin:$objectboxVersion")
+    }
+}
+*/

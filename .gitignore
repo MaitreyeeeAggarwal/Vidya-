@@ -1,0 +1,15 @@
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Gradle files
+.gradle/
+build/
+
+# IDE files
+.idea/
+*.iml
+
+# Machine Learning Models (DO NOT COMMIT TO GIT)
+*.bin
+*.task
+*.tflite

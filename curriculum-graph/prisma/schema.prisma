@@ -1,0 +1,60 @@
+datasource db {
+  provider = "sqlite" // Ideal for local offline Android architectures (SQLCipher compatible)
+  url      = "file:./vidya_curriculum.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum PedagogyMode {
+  VISUAL_MATH
+  PREDICT_EXPLAIN
+  STORY_NARRATE
+  LANG_DRILL
+}
+
+model Board {
+  id        String    @id @default(uuid())
+  name      String    @unique // e.g., "NCERT", "UP_BOARD", "CBSE"
+  state     String?   // Nullable for central boards like NCERT
+  subjects  Subject[]
+  createdAt DateTime  @default(now())
+}
+
+model Subject {
+  id        String    @id @default(uuid())
+  name      String    // e.g., "Science", "Mathematics", "Social Science", "English"
+  grade     Int       // e.g., 6, 7, 8, 9, 10
+  boardId   String
+  board     Board     @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  chapters  Chapter[]
+
+  @@unique([name, grade, boardId])
+}
+
+model Chapter {
+  id          String    @id @default(uuid())
+  chapterNum  Int       // Sequential ordering (e.g., Chapter 1, Chapter 2)
+  title       String    // e.g., "Components of Food", "Light - Reflection and Refraction"
+  subjectId   String
+  subject     Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  concepts    Concept[]
+
+  @@unique([chapterNum, subjectId])
+}
+
+model Concept {
+  id           String       @id @default(uuid())
+  code         String       @unique // e.g., "SCI-CH01-C01" for deterministic local lookups
+  name         String       // e.g., "Carbohydrates & Fats", "Spherical Mirrors"
+  pedagogyMode PedagogyMode
+  difficulty   Int          // Scaled integer (1 to 10) for content scaffolding
+  chapterId    String
+  chapter      Chapter      @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  
+  // Self-referencing relationship to establish dependency trees within the graph
+  prerequisiteId String?
+  prerequisite   Concept?   @relation("ConceptDependencies", fields: [prerequisiteId], references: [id])
+  dependents     Concept[]  @relation("ConceptDependencies")
+}

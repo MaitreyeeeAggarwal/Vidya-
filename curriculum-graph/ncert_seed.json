@@ -1,0 +1,80 @@
+[
+  {
+    "board": "NCERT",
+    "state": "Central",
+    "subjects": [
+      {
+        "name": "Science",
+        "grade": 6,
+        "chapters": [
+          {
+            "chapterNum": 1,
+            "title": "Components of Food",
+            "concepts": [
+              {
+                "code": "SCI-G06-CH01-C01",
+                "name": "Nutrients (Carbohydrates, Proteins, Fats)",
+                "pedagogyMode": "STORY_NARRATE",
+                "difficulty": 2
+              },
+              {
+                "code": "SCI-G06-CH01-C02",
+                "name": "Balanced Diet & Deficiency Diseases",
+                "pedagogyMode": "PREDICT_EXPLAIN",
+                "difficulty": 3
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Mathematics",
+        "grade": 10,
+        "chapters": [
+          {
+            "chapterNum": 1,
+            "title": "Real Numbers",
+            "concepts": [
+              {
+                "code": "MAT-G10-CH01-C01",
+                "name": "Euclid's Division Lemma & Fundamental Theorem of Arithmetic",
+                "pedagogyMode": "VISUAL_MATH",
+                "difficulty": 6
+              }
+            ]
+          },
+          {
+            "chapterNum": 10,
+            "title": "Circles",
+            "concepts": [
+              {
+                "code": "MAT-G10-CH10-C01",
+                "name": "Tangent to a Circle",
+                "pedagogyMode": "VISUAL_MATH",
+                "difficulty": 5
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "English",
+        "grade": 6,
+        "chapters": [
+          {
+            "chapterNum": 1,
+            "title": "Who Did Patrick's Homework?",
+            "concepts": [
+              {
+                "code": "ENG-G06-CH01-C01",
+                "name": "Vocabulary Drill & Pronunciation of Challenging Verbs",
+                "pedagogyMode": "LANG_DRILL",
+                "difficulty": 2
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
