@@ -24,18 +24,15 @@ import kotlinx.coroutines.withContext
  */
 class DeltaSyncWorker(
     appContext: Context,
-    workerParams: WorkerParameters
+    workerParams: WorkerParameters,
+    private val sessionDao: SessionDao,
+    private val apiService: VidyaApiService
 ) : CoroutineWorker(appContext, workerParams) {
 
     companion object {
         private const val TAG = "DeltaSyncWorker"
         const val MAX_BATCH_SIZE = 500
     }
-
-    // In production these would be injected via WorkerFactory + Hilt/Koin.
-    // For now, declared as lateinit — wired in the custom WorkerFactory.
-    private lateinit var sessionDao: SessionDao
-    private lateinit var apiService: VidyaApiService
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         Log.d(TAG, "Delta sync started — attempt #$runAttemptCount")

@@ -55,6 +55,8 @@ fun LocalSessionEvent.toNetworkDto(): EventSyncItemDto {
         sessionId = this.sessionId,
         eventType = this.eventType.name,
         timestamp = iso8601Format.format(Date(this.timestamp)),
-        payload = this.payload
+        payload = this.payload,
+        language_code = this.languageCode,
+        transcript = this.transcript
     )
 }

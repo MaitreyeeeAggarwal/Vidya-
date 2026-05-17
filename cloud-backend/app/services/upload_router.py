@@ -1,5 +1,5 @@
-from fastapi import APIRouter, UploadFile, File, Header, HTTPException
-from ..auth import verify_token
+from fastapi import APIRouter, UploadFile, File, Header, HTTPException, Depends
+from ..auth import verify_device_binding, TokenPayload
 import boto3
 import os
 
@@ -26,7 +26,7 @@ BUCKET_NAME = os.getenv("AUDIO_BUCKET_NAME", "vidya-classroom-audio-vault")
 async def upload_classroom_audio_chunk(
     session_event_id: str,
     file: UploadFile = File(...),
-    authorization: str = Header(None),
+    token_payload: TokenPayload = Depends(verify_device_binding),
 ):
     """
     Receive a single audio chunk from a syncing tablet.
@@ -39,14 +39,6 @@ async def upload_classroom_audio_chunk(
     The file is streamed directly to object storage without buffering
     the entire payload in memory.
     """
-    if not authorization:
-        raise HTTPException(status_code=401, detail="Missing authorization header.")
-
-    # Validate the device token (reuse existing auth infra)
-    try:
-        verify_token(authorization.replace("Bearer ", ""))
-    except Exception:
-        raise HTTPException(status_code=401, detail="Invalid or expired token.")
 
     s3_key = f"audio/events/{session_event_id}/{file.filename}"
 

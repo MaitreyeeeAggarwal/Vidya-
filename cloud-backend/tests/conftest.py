@@ -75,3 +75,75 @@ def mock_db(monkeypatch):
     monkeypatch.setattr("app.routes.db", mock_db_instance)
     monkeypatch.setattr("app.auth.db", mock_db_instance)
     return mock_db_instance
+
+
+# ── Sync / Delta Engine mock ─────────────────────────────────────────────────
+
+@pytest.fixture(autouse=True)
+def mock_sync_db(monkeypatch):
+    """
+    Replaces the Prisma `db` used by `app.sync` with a lightweight
+    in-memory store so tests never require a real database connection.
+
+    The mock accurately simulates:
+    - Idempotent find_unique: returns the stored record if the id exists.
+    - Idempotent create: raises an integrity-style error if the id already
+      exists (just like Postgres ON CONFLICT), but the sync handler catches
+      that via find_unique first, so in practice we just store and return.
+    - Transactional context manager (async with db.tx() as tx).
+    """
+    _store: dict = {}  # id -> mock record
+
+    class MockSessionEvent:
+        async def find_unique(self, where):
+            record_id = where.get("id")
+            return _store.get(record_id)
+
+        async def create(self, data):
+            class _Record:
+                def __init__(self, d):
+                    self.__dict__.update(d)
+            record = _Record(data)
+            _store[data["id"]] = record
+            return record
+
+        async def create_many(self, data, skip_duplicates=False):
+            for item in data:
+                if item["id"] not in _store or not skip_duplicates:
+                    class _Record:
+                        def __init__(self, d):
+                            self.__dict__.update(d)
+                    _store[item["id"]] = _Record(item)
+            return len(data)
+
+    class MockSession:
+        async def upsert(self, where, data):
+            return True
+
+    class MockTxContext:
+        def __init__(self):
+            self.sessionevent = MockSessionEvent()
+            self.session = MockSession()
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *args):
+            pass
+
+    class MockDb:
+        def __init__(self):
+            self.sessionevent = MockSessionEvent()
+            self.session = MockSession()
+
+        def tx(self):
+            return MockTxContext()
+
+        async def connect(self):
+            pass
+
+        async def disconnect(self):
+            pass
+
+    mock_db_instance = MockDb()
+    monkeypatch.setattr("app.sync.db", mock_db_instance)

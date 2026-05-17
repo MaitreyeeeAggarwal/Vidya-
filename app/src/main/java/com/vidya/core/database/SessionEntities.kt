@@ -53,5 +53,7 @@ data class LocalSessionEvent(
     val sessionId: String,
     val eventType: EventType,
     val timestamp: Long = System.currentTimeMillis(),
-    val payload: String = "{}"
+    val payload: String = "{}",
+    val languageCode: String? = null,
+    val transcript: String? = null
 )

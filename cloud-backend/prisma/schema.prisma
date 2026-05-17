@@ -60,6 +60,7 @@ model Session {
   endedAt    DateTime?
   syncState  Boolean        @default(false)
   events     SessionEvent[]
+  facilitationScore SessionFacilitationScore?
 
   @@index([teacherId, classId])
 }
@@ -73,4 +74,33 @@ model SessionEvent {
   payload    String    @default("{}") 
 
   @@index([sessionId, timestamp])
+}
+
+model SystemMetadata {
+  key        String   @id // e.g., "curriculum_etag", "last_curriculum_sync"
+  value      String   // Stores string hash arrays or ISO timestamps
+  updatedAt  DateTime @updatedAt
+}
+
+enum FacilitationGradingTier {
+  EXCELLENT
+  PROFICIENT
+  DEVELOPING
+  NEEDS_SUPPORT
+}
+
+model SessionFacilitationScore {
+  id                      String                  @id @default(uuid())
+  sessionId               String                  @unique
+  session                 Session                 @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  facilitationScore       Float
+  gradingTier             FacilitationGradingTier
+  cognitiveDepthRatio     Float
+  nominationGiniIndex     Float
+  averageWaitTimeSeconds  Float
+  diagnosticTags          String[]                @default([])
+  pedagogicalAdvice       String?
+  evaluatedAt             DateTime                @default(now())
+
+  @@index([gradingTier, facilitationScore])
 }

@@ -2,6 +2,7 @@ package com.vidya.core.network
 
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 
@@ -36,4 +37,15 @@ interface VidyaApiService {
         @Body sessions: List<SessionSyncDto>,
         @Header("Authorization") token: String? = null
     ): Response<Map<String, Any>>
+
+    /**
+     * Curriculum Delta Check (ETag validated).
+     * Returns 304 Not Modified if the client's ETag matches the server.
+     * Otherwise returns 200 OK with JSON patch operations to apply.
+     */
+    @GET("/api/curriculum/delta-check")
+    suspend fun getCurriculumDelta(
+        @Header("If-None-Match") ifNoneMatchHeader: String,
+        @Header("Authorization") token: String? = null
+    ): Response<CurriculumDeltaResponseDto>
 }
